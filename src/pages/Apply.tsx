@@ -24,7 +24,7 @@ const Apply = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('https://discord.com/api/webhooks/1332899299054587917/2Zjj-v0Kd91ENr_uTXuuAd7MfUG6k8vVAYOuEejcEyC5d5GUkE7d1SoR-ZOrl62IxrwM', {
+      const response = await fetch('https://discord.com/api/webhooks/1333170079797350572/5LJBbZVEovZV-KY36ah3SfVtm27BxNn8ztvKng_tV7pLAYj5fHPhJ70XdG0bk4b3FeNT', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
