@@ -31,8 +31,17 @@ const Ranks = () => {
   }, []);
 
   return (
-    <div className="min-h-screen pt-16">
-      <div className="max-w-4xl mx-auto px-4 py-16">
+    <div 
+      className="min-h-screen pt-16 relative"
+      style={{
+        backgroundImage: "url('/lovable-uploads/1ebf8221-fe21-4bbb-a307-c8d636e52db4.png')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }}
+    >
+      <div className="absolute inset-0 bg-black/70" /> {/* Dark overlay */}
+      <div className="relative max-w-4xl mx-auto px-4 py-16">
         <h1 className="text-4xl font-bold text-center mb-16 text-primary slide-in">
           Rank Structure
         </h1>
@@ -40,7 +49,7 @@ const Ranks = () => {
           {ranks.map((rank, index) => (
             <div
               key={rank.title}
-              className="rank-card scroll-reveal"
+              className="rank-card scroll-reveal backdrop-blur-sm bg-card/80"
               style={{ transitionDelay: `${index * 100}ms` }}
             >
               <h2 className="text-2xl font-bold text-primary mb-2">{rank.title}</h2>
