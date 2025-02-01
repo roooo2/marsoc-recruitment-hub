@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { Session } from '@supabase/supabase-js';
+import { useNavigate } from 'react-router-dom';
 
 const Apply = () => {
   const [formData, setFormData] = useState({
-    discordUsername: '',
     pavlovUser: '',
     age: '',
     experience: '',
@@ -18,9 +20,38 @@ const Apply = () => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        navigate('/');
+        toast.error('Please login with Discord first');
+      }
+      setSession(session);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (!session) {
+        navigate('/');
+        toast.error('Please login with Discord first');
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!session?.user) {
+      toast.error('Please login with Discord first');
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
@@ -31,7 +62,8 @@ const Apply = () => {
         },
         body: JSON.stringify({
           content: `New Application Received!\n\n` +
-            `Discord Username: ${formData.discordUsername}\n` +
+            `Discord User: <@${session.user.user_metadata.sub}>\n` +
+            `User ID: ${session.user.user_metadata.sub}\n` +
             `Pavlov User: ${formData.pavlovUser}\n` +
             `Age: ${formData.age}\n` +
             `Previous Experience: ${formData.experience}\n` +
@@ -46,7 +78,6 @@ const Apply = () => {
       if (response.ok) {
         toast.success("Application submitted successfully!");
         setFormData({
-          discordUsername: '',
           pavlovUser: '',
           age: '',
           experience: '',
@@ -66,6 +97,10 @@ const Apply = () => {
     }
   };
 
+  if (!session) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen pt-16">
       <div className="max-w-2xl mx-auto px-4 py-16">
@@ -73,15 +108,6 @@ const Apply = () => {
           Apply to M.A.R.S.O.C
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6 fade-in">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Discord Username</label>
-            <Input
-              required
-              value={formData.discordUsername}
-              onChange={(e) => setFormData(prev => ({ ...prev, discordUsername: e.target.value }))}
-              placeholder="Your Discord username"
-            />
-          </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Pavlov Username</label>
             <Input
