@@ -32,18 +32,8 @@ export const Navigation = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogin = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'discord',
-        options: {
-          redirectTo: window.location.origin,
-        },
-      });
-      if (error) throw error;
-    } catch (error) {
-      console.error('Error logging in:', error);
-    }
+  const handleLogin = () => {
+    window.location.href = "https://discord.com/oauth2/authorize?client_id=1145180147343970365&response_type=code&redirect_uri=https%3A%2F%2Fpreview--marsoc-recruitment-hub.lovable.app%2F&scope=identify";
   };
 
   const handleLogout = async () => {
